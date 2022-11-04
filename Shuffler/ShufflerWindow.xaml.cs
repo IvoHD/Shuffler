@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +26,17 @@ namespace Shuffler
 		public ShufflerWindow()
 		{
 			InitializeComponent();
+			DataContext = new ShufflerUI();
+		}
+
+		void PickFolder(object sender, RoutedEventArgs e)
+		{
+			CommonOpenFileDialog dlg = new();
+			dlg.IsFolderPicker = true;
+
+			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
+				if(dlg.FileName != string.Empty)
+					((ShufflerUI)DataContext).FolderPath = dlg.FileName;
 		}
 	}
 }
