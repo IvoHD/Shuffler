@@ -61,7 +61,12 @@ namespace Shuffler
 
 		void Play_Click(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.PlayRandomFile();
+			ShufflerUI.Play();
+		}
+
+		void Pause_Click(object sender, RoutedEventArgs e)
+		{
+			ShufflerUI.Pause();
 		}
 	}
 }

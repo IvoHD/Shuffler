@@ -8,8 +8,8 @@
         Title="Shuffler" Height="450" Width="800">
     <Grid>
         <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickFolder_DoubleClick" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
-        <Button FontSize="50" HorizontalAlignment="Center" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" Click="Play_Click">
-            <TextBlock Text="&#9654;" FontSize="75" Margin="19,-51"/>
-        </Button> 
+        <ToggleButton FontSize="50" HorizontalAlignment="Center" IsEnabled="{Binding ButtonIsEnabled}" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
+            <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
+        </ToggleButton> 
     </Grid>
 </Window>

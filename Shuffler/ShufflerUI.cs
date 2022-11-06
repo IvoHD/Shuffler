@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.WindowsAPICodePack.Shell.Interop;
 using System.Windows;
+using System.Linq;
 
 namespace Shuffler
 {
@@ -18,8 +19,9 @@ namespace Shuffler
 		public delegate void missingFile();
 		public event missingFile MissingFile;
 
-		WindowsMediaPlayer Player { get; set; }
+		WindowsMediaPlayer Player { get; set; } = new();
 		Random Random { get; set; } = new();
+		readonly string[] allowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".m4p", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac"};
 
 		string _folderPath = "Double click to pick folder...";
 		public string FolderPath 
@@ -35,6 +37,39 @@ namespace Shuffler
 
 		string[] FilePaths { get; set; } = { };
 
+		string _buttonSymbol = ButtonState.play;
+		public string ButtonSymbol {
+			get { return _buttonSymbol; }
+			set 
+			{ 
+				_buttonSymbol = value;
+				Trace.WriteLine(value);
+				OnPropertyChanged("ButtonSymbol");
+			}
+		}
+
+		bool _buttonIsEnabled = false;
+		public bool ButtonIsEnabled
+		{
+			get { return _buttonIsEnabled; }
+			set 
+			{ 
+				_buttonIsEnabled = value;
+				OnPropertyChanged("ButtonIsEnabled"); 
+			}
+		}
+
+		bool _buttonStateIsPlay;
+		public bool ButtonStateIsPlay
+		{
+			get { return _buttonStateIsPlay; }
+			set
+			{
+				_buttonStateIsPlay = value;
+				OnPropertyChanged("ButtonStateIsPlay");
+			}
+		}
+
 		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(String info)
 		{
@@ -44,17 +79,26 @@ namespace Shuffler
 
 		void GetFiles()
 		{
-			FilePaths = Directory.GetFiles(FolderPath);
-		}
+			FilePaths = Directory
+			.GetFiles(FolderPath)
+			.Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
+			.ToArray();
 
-		public void PlayRandomFile()
-		{
 			if (FilePaths.Length == 0)
 			{
 				InvalidPath.Invoke();
 				return;
 			}
+			Player.controls.stop();
+			Player = new();
+			Player.PlayStateChange += player_PlayStateChange;
+			ButtonIsEnabled = true;
+			ButtonSymbol = ButtonState.play;
+			ButtonStateIsPlay = false;
+		}
 
+		void PlayRandomFile()
+		{
 			string Path = FilePaths[Random.Next(FilePaths.Length)];
 			if (!File.Exists(FilePaths[Random.Next(FilePaths.Length)]))
 			{
@@ -62,16 +106,38 @@ namespace Shuffler
 				return;
 			}
 
-			Player = new();
 			Player.URL = Path;
-			Player.PlayStateChange += player_PlayStateChange;
 			Player.controls.play();
+			ButtonSymbol = ButtonState.pause;
 		}
 
-		private void player_PlayStateChange(int _)
+		void player_PlayStateChange(int _)
 		{
-			if(Player.playState == WMPLib.WMPPlayState.wmppsMediaEnded)
+			if(Player.playState == WMPPlayState.wmppsMediaEnded)
 				PlayRandomFile();
 		}
+
+		public void Play()
+		{
+			if (Player.playState == WMPPlayState.wmppsPaused)
+			{
+				Player.controls.play();
+				ButtonSymbol = ButtonState.pause;
+			}
+			else
+				PlayRandomFile();
+		}
+
+		public void Pause()
+		{
+			Player.controls.pause();
+			ButtonSymbol = ButtonState.play;
+		}
+	}
+
+	static class ButtonState
+	{
+		public static readonly string play = "▶";
+		public static readonly string pause = "⏸";
 	}
 }
