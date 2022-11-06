@@ -23,10 +23,12 @@ namespace Shuffler
 	/// </summary>
 	public partial class ShufflerWindow : Window
 	{
+		static ShufflerUI ShufflerUI;
 		public ShufflerWindow()
 		{
 			InitializeComponent();
-			DataContext = new ShufflerUI();
+			DataContext = ShufflerUI = new ShufflerUI();
+			
 		}
 
 		void PickFolder(object sender, RoutedEventArgs e)
@@ -36,7 +38,7 @@ namespace Shuffler
 
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
 				if(dlg.FileName != string.Empty)
-					((ShufflerUI)DataContext).FolderPath = dlg.FileName;
+					ShufflerUI.FolderPath = dlg.FileName;
 		}
 	}
 }
