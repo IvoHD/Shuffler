@@ -21,7 +21,7 @@ namespace Shuffler
 
 		WindowsMediaPlayer Player { get; set; } = new();
 		Random Random { get; set; } = new();
-		readonly string[] allowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".m4p", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac"};
+		readonly string[] allowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".mp4", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac"};
 
 		string _folderPath = "Double click to pick folder...";
 		public string FolderPath 
@@ -90,8 +90,6 @@ namespace Shuffler
 				return;
 			}
 			Player.controls.stop();
-			Player = new();
-			Player.PlayStateChange += player_PlayStateChange;
 			ButtonIsEnabled = true;
 			ButtonSymbol = ButtonState.play;
 			ButtonStateIsPlay = false;
@@ -106,6 +104,8 @@ namespace Shuffler
 				return;
 			}
 
+			Player = new();
+			Player.PlayStateChange += player_PlayStateChange;
 			Player.URL = Path;
 			Player.controls.play();
 			ButtonSymbol = ButtonState.pause;
