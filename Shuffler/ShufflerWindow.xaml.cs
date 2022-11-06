@@ -23,22 +23,45 @@ namespace Shuffler
 	/// </summary>
 	public partial class ShufflerWindow : Window
 	{
-		static ShufflerUI ShufflerUI;
+		ShufflerUI ShufflerUI { get; set; }
 		public ShufflerWindow()
 		{
 			InitializeComponent();
 			DataContext = ShufflerUI = new ShufflerUI();
-			
+			ShufflerUI.InvalidPath += InvalidPath;
+			ShufflerUI.MissingFile += MissingFile;
 		}
 
-		void PickFolder(object sender, RoutedEventArgs e)
+		void InvalidPath()
+		{
+			MessageBox.Show("Folder path is not valid, select a folder with files.", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
+			PickFolder();
+		}
+
+		void MissingFile()
+		{
+			MessageBox.Show("File was deleted or moved. Pick another folder", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
+			PickFolder();
+		}
+
+		void PickFolder()
 		{
 			CommonOpenFileDialog dlg = new();
 			dlg.IsFolderPicker = true;
 
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
-				if(dlg.FileName != string.Empty)
+				if (dlg.FileName != string.Empty)
 					ShufflerUI.FolderPath = dlg.FileName;
+		}
+
+		void PickFolder_DoubleClick(object sender, RoutedEventArgs e)
+		{
+			PickFolder();
+		}
+
+		void Play_Click(object sender, RoutedEventArgs e)
+		{
+			ShufflerUI.PlayRandomFile();
 		}
 	}
 }

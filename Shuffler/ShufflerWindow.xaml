@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="Shuffler" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickFolder" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
+        <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickFolder_DoubleClick" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
+        <Button FontSize="50" HorizontalAlignment="Center" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" Click="Play_Click">
+            <TextBlock Text="&#9654;" FontSize="75" Margin="19,-51"/>
+        </Button> 
     </Grid>
 </Window>
