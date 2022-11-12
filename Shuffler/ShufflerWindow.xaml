@@ -11,6 +11,7 @@
         <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickFolder_DoubleClick" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
         <ToggleButton FontSize="50" HorizontalAlignment="Center" IsEnabled="{Binding ButtonIsEnabled}" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
             <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
-        </ToggleButton> 
+        </ToggleButton>
+        <Slider Margin="50,90,700,95" Orientation="Vertical" Value="{Binding Volume}" Maximum="100"></Slider>
     </Grid>
 </Window>

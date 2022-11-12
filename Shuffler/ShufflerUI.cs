@@ -43,7 +43,6 @@ namespace Shuffler
 			set 
 			{ 
 				_buttonSymbol = value;
-				Trace.WriteLine(value);
 				OnPropertyChanged("ButtonSymbol");
 			}
 		}
@@ -69,6 +68,18 @@ namespace Shuffler
 				OnPropertyChanged("ButtonStateIsPlay");
 			}
 		}
+
+		int _volume = 50;
+		public int Volume
+		{
+			get { return _volume; }
+			set { 
+				_volume = value;
+				Player.settings.volume = value;
+				OnPropertyChanged("Volume");
+			}
+		}
+
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(String info)
@@ -105,13 +116,13 @@ namespace Shuffler
 			}
 
 			Player = new();
-			Player.PlayStateChange += player_PlayStateChange;
+			Player.PlayStateChange += Player_PlayStateChange;
 			Player.URL = Path;
 			Player.controls.play();
 			ButtonSymbol = ButtonState.pause;
 		}
 
-		void player_PlayStateChange(int _)
+		void Player_PlayStateChange(int _)
 		{
 			if(Player.playState == WMPPlayState.wmppsMediaEnded)
 				PlayRandomFile();
