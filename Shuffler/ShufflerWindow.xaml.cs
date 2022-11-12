@@ -28,8 +28,8 @@ namespace Shuffler
 		{
 			InitializeComponent();
 			DataContext = ShufflerUI = new ShufflerUI();
-			ShufflerUI.InvalidPath += InvalidPath;
-			ShufflerUI.MissingFile += MissingFile;
+			ShufflerUI.FileManager.InvalidPath += InvalidPath;
+			ShufflerUI.FileManager.MissingFile += MissingFile;
 		}
 
 		void InvalidPath()
@@ -51,7 +51,7 @@ namespace Shuffler
 
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
 				if (dlg.FileName != string.Empty)
-					ShufflerUI.FolderPath = dlg.FileName;
+					ShufflerUI.FileManager.FolderPath = dlg.FileName;
 		}
 
 		void PickFolder_DoubleClick(object sender, RoutedEventArgs e)
@@ -61,12 +61,12 @@ namespace Shuffler
 
 		void Play_Click(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.Play();
+			ShufflerUI.PlayerControls.Play();
 		}
 
 		void Pause_Click(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.Pause();
+			ShufflerUI.PlayerControls.Pause();
 		}
 	}
 }
