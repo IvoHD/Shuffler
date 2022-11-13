@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Shuffler
 {
@@ -24,12 +26,21 @@ namespace Shuffler
 	public partial class ShufflerWindow : Window
 	{
 		ShufflerUI ShufflerUI { get; set; }
+		bool DragStarted { get; set; }
+
+		DispatcherTimer UpdateCurrPositionTimer = new();
+
 		public ShufflerWindow()
 		{
 			InitializeComponent();
 			DataContext = ShufflerUI = new ShufflerUI();
 			ShufflerUI.FileManager.InvalidPath += InvalidPath;
 			ShufflerUI.FileManager.MissingFile += MissingFile;
+
+			//UpdateCurrPositionTimer updates CurrPosition every 100 milliseconds
+			UpdateCurrPositionTimer.Interval = new(0, 0, 0, 0, 100);
+			UpdateCurrPositionTimer.Tick += UpdatePlayerPositions;
+			UpdateCurrPositionTimer.Start();
 		}
 
 		void InvalidPath()
@@ -67,6 +78,26 @@ namespace Shuffler
 		void Pause_Click(object sender, RoutedEventArgs e)
 		{
 			ShufflerUI.PlayerControls.Pause();
+		}
+
+		void UpdatePlayerPositions(object sender, EventArgs e)
+		{
+			if (!DragStarted)
+				ShufflerUI.PlayerControls.UpdatePositions();
+			else
+				ShufflerUI.PlayerControls.UpdatePositionsExcludingCurrPositionPercent();
+		}
+
+		void PlaybackSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+		{
+			DragStarted = true;
+		}
+
+		void PlaybackSlider_DragComplete(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+		{
+			DragStarted = false;
+			Slider Slider = sender as Slider;
+			ShufflerUI.PlayerControls.CurrPositionPercent = Slider.Value;
 		}
 	}
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using static Shuffler.ShufflerUI;
 
 namespace Shuffler
 {
@@ -17,9 +16,12 @@ namespace Shuffler
 		public delegate void missingFile();
 		public event missingFile MissingFile;
 
+		public delegate void newFolderSelected();
+		public event newFolderSelected NewFolderSelected;
+
 		Random Random { get; set; } = new();
 
-		readonly string[] allowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".mp4", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac" };
+		readonly string[] AllowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".mp4", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac" };
 		string[] FilePaths { get; set; } = { };
 
 		string _folderPath = "Double click to pick folder...";
@@ -38,7 +40,7 @@ namespace Shuffler
 		{
 			FilePaths = Directory
 			.GetFiles(FolderPath)
-			.Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
+			.Where(file => AllowedExtensions.Any(file.ToLower().EndsWith))
 			.ToArray();
 
 			if (FilePaths.Length == 0)
@@ -46,9 +48,10 @@ namespace Shuffler
 				InvalidPath.Invoke();
 				return;
 			}
-			Player.controls.stop();
-			ShufflerUI.UIManager.EnablePlayButton();
-			ShufflerUI.UIManager.SetButtonPlay();
+			ShufflerUI.Player.controls.stop();
+			ShufflerUI.Player = new();
+
+			NewFolderSelected.Invoke();
 		}
 
 		public string GetRandomFile()

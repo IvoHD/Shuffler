@@ -12,6 +12,9 @@
         <ToggleButton FontSize="50" HorizontalAlignment="Center" IsEnabled="{Binding UIManager.ButtonIsEnabled}" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" IsChecked="{Binding UIManager.ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
             <TextBlock Text="{Binding UIManager.ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
         </ToggleButton>
-        <Slider Margin="50,90,700,95" Orientation="Vertical" Value="{Binding PlayerControls.Volume}" Maximum="100"></Slider>
+        <Slider Margin="50,90,700,95" Orientation="Vertical" Value="{Binding PlayerControls.Volume}" Maximum="100"/>
+        <Slider Margin="150,350,150,0" Maximum="100" Value="{Binding PlayerControls.CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding UIManager.PlayBackSliderIsEnabled}"/>
+        <TextBlock Margin="83,350,650,50" Text="{Binding PlayerControls.CurrPositionString}"></TextBlock>
+        <TextBlock Margin="650,350,83,50" Text="{Binding PlayerControls.MaxPositionString}"></TextBlock>
     </Grid>
 </Window>

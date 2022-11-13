@@ -9,10 +9,21 @@ namespace Shuffler
 {
 	class UIManager : NotifyPropertyChanged
 	{
-		const string play = "▶";
-		const string pause = "⏸";
+		const string Play = "▶";
+		const string Pause = "⏸";
 
-		string _buttonSymbol = play;
+		public UIManager()
+		{
+			ShufflerUI.FileManager.NewFolderSelected += FileSelected;
+		}
+
+		void FileSelected()
+		{
+			ButtonIsEnabled = true;
+			SetButtonPlay();
+		}
+
+		string _buttonSymbol = Play;
 		public string ButtonSymbol
 		{
 			get { return _buttonSymbol; }
@@ -45,20 +56,26 @@ namespace Shuffler
 			}
 		}
 
-		public void EnablePlayButton()
+		bool _playBackSliderIsEnabled = false;
+		public bool PlayBackSliderIsEnabled
 		{
-			ButtonIsEnabled = true;
+			get { return _playBackSliderIsEnabled; }
+			set 
+			{
+				_playBackSliderIsEnabled = value;
+				OnPropertyChanged("PlayBackSliderIsEnabled");
+			}
 		}
 
 		public void SetButtonPlay()
 		{
-			ShufflerUI.UIManager.ButtonSymbol = play;
+			ShufflerUI.UIManager.ButtonSymbol = Play;
 			ShufflerUI.UIManager.ButtonStateIsPlay = false;
 		}
 
 		public void SetButtonPause()
 		{
-			ShufflerUI.UIManager.ButtonSymbol = pause;
+			ShufflerUI.UIManager.ButtonSymbol = Pause;
 			ShufflerUI.UIManager.ButtonStateIsPlay = true;
 		}
 	}
