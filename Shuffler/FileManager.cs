@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -6,18 +7,16 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Shuffler
 {
-	class FileManager : NotifyPropertyChanged
+	class FileManager
 	{
 		public delegate void invalidPath();
 		public event invalidPath InvalidPath;
 		public delegate void missingFile();
 		public event missingFile MissingFile;
-
-		public delegate void newFolderSelected();
-		public event newFolderSelected NewFolderSelected;
 
 		Random Random { get; set; } = new();
 
@@ -32,7 +31,6 @@ namespace Shuffler
 			{
 				_folderPath = value;
 				GetFiles();
-				OnPropertyChanged("FolderPath");
 			}
 		}
 
@@ -50,8 +48,6 @@ namespace Shuffler
 			}
 			ShufflerUI.Player.controls.stop();
 			ShufflerUI.Player = new();
-
-			NewFolderSelected.Invoke();
 		}
 
 		public string GetRandomFile()

@@ -34,58 +34,35 @@ namespace Shuffler
 		{
 			InitializeComponent();
 			DataContext = ShufflerUI = new ShufflerUI();
-			ShufflerUI.FileManager.InvalidPath += InvalidPath;
-			ShufflerUI.FileManager.MissingFile += MissingFile;
-
+		
 			//UpdateCurrPositionTimer updates CurrPosition every 100 milliseconds
 			UpdateCurrPositionTimer.Interval = new(0, 0, 0, 0, 100);
 			UpdateCurrPositionTimer.Tick += UpdatePlayerPositions;
 			UpdateCurrPositionTimer.Start();
 		}
 
-		void InvalidPath()
-		{
-			MessageBox.Show("Folder path is not valid, select a folder with files.", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
-			PickFolder();
-		}
-
-		void MissingFile()
-		{
-			MessageBox.Show("File was deleted or moved. Pick another folder", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
-			PickFolder();
-		}
-
-		void PickFolder()
-		{
-			CommonOpenFileDialog dlg = new();
-			dlg.IsFolderPicker = true;
-
-			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
-				if (dlg.FileName != string.Empty)
-					ShufflerUI.FileManager.FolderPath = dlg.FileName;
-		}
 
 		void PickFolder_DoubleClick(object sender, RoutedEventArgs e)
 		{
-			PickFolder();
+			ShufflerUI.PickFolder();
 		}
 
 		void Play_Click(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.PlayerControls.Play();
+			ShufflerUI.Play();
 		}
 
 		void Pause_Click(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.PlayerControls.Pause();
+			ShufflerUI.Pause();
 		}
 
 		void UpdatePlayerPositions(object sender, EventArgs e)
 		{
 			if (!DragStarted)
-				ShufflerUI.PlayerControls.UpdatePositions();
+				ShufflerUI.UpdateSlider();
 			else
-				ShufflerUI.PlayerControls.UpdatePositionsExcludingCurrPositionPercent();
+				ShufflerUI.UpdateSliderExcludingCurrPositionPercent();
 		}
 
 		void PlaybackSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -97,7 +74,7 @@ namespace Shuffler
 		{
 			DragStarted = false;
 			Slider Slider = sender as Slider;
-			ShufflerUI.PlayerControls.CurrPositionPercent = Slider.Value;
+			ShufflerUI.CurrPositionPercent = Slider.Value;
 		}
 	}
 }
