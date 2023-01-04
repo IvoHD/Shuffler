@@ -8,7 +8,7 @@
         Title="Shuffler" Height="450" Width="800"
         Icon="Images\Icon.ico">
     <Grid>
-        <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickFolder_DoubleClick" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
+        <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickDirectory_DoubleClick" Text="{Binding FolderPath}" VerticalAlignment="Top" Width="520"/>
         <ToggleButton FontSize="50" HorizontalAlignment="Center" IsEnabled="{Binding ButtonIsEnabled}" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
             <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
         </ToggleButton>
@@ -16,5 +16,6 @@
         <Slider Margin="150,350,150,0" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
         <TextBlock Margin="83,350,650,50" Text="{Binding CurrPositionString}"></TextBlock>
         <TextBlock Margin="650,350,83,50" Text="{Binding MaxPositionString}"></TextBlock>
+        <TextBlock HorizontalAlignment="Center" Margin="0,114,0,0" TextWrapping="Wrap" Text="{Binding FileName}" FontSize="40" TextAlignment="Center" VerticalAlignment="Top" Height="101" Width="520"/>
     </Grid>
 </Window>

@@ -3,6 +3,7 @@ using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System;
+using System.IO;
 
 namespace Shuffler
 {
@@ -31,7 +32,7 @@ namespace Shuffler
 
 			FileManager.InvalidPath += InvalidPath;
 			FileManager.MissingFile += MissingFile;
-			PlayerControls.StartedPlaying += () => PlayBackSliderIsEnabled = true;
+			PlayerControls.StartedPlaying += OnPlay;
 		}
 
 		string _buttonSymbol = PlayIcon;
@@ -92,7 +93,7 @@ namespace Shuffler
 		{
 			get
 			{
-				if ((double?)Player?.controls?.currentPosition is null || (double?)Player?.currentMedia?.duration is null)
+				if (Player?.controls?.currentPosition is null || Player?.currentMedia?.duration is null)
 					return 0;
 				return Player.controls.currentPosition / Player.currentMedia.duration * 100;
 			}
@@ -104,63 +105,58 @@ namespace Shuffler
 
 		public string CurrPositionString
 		{
-			get
-			{
-				if (Player?.controls?.currentPositionString is "")
-					return "00:00";
-				return Player.controls.currentPositionString;
-			}
+			get { return Player?.controls?.currentPositionString is "" ? "00:00" : Player.controls.currentPositionString; }
 		}
 
 		public string MaxPositionString
 		{
-			get
-			{
-				if (Player?.currentMedia?.durationString is null)
-					return "00:00";
-				return Player.currentMedia.durationString;
-			}
+			get { return Player?.currentMedia?.durationString ?? "00:00"; }
 		}
 
-		public string FolderPath
+		public string DirectoryPath
 		{
-			get { return FileManager.FolderPath; }
+			get { return FileManager.DirectoryPath; }
 			set
 			{
-				FileManager.FolderPath = value;
+				FileManager.DirectoryPath = value;
 			}
 		}
 
-		public void PickFolder()
+		public string FileName
+		{
+			get { return Player is null ? "select directory" : Path.GetFileNameWithoutExtension(Player.URL); }
+		}
+
+		public void PickDirectory()
 		{
 			CommonOpenFileDialog dlg = new();
 			dlg.IsFolderPicker = true;
 
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
 				if (dlg.FileName != string.Empty)
-					FolderPath = dlg.FileName;
+					DirectoryPath = dlg.FileName;
 
-			FolderSelected();
+			DirectorySelected();
 		}
 
 		void InvalidPath()
 		{
-			MessageBox.Show("Folder path is not valid, select a folder with files.", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
-			PickFolder();
+			MessageBox.Show("Directory path is not valid, select a directory with files.", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
+			PickDirectory();
 		}
 
 		void MissingFile()
 		{
-			MessageBox.Show("File was deleted or moved. Pick another folder", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
-			PickFolder();
+			MessageBox.Show("File was deleted or moved. Pick another directory", "Invalid Path", MessageBoxButton.OK, MessageBoxImage.Error);
+			PickDirectory();
 		}
 
-		void FolderSelected()
+		void DirectorySelected()
 		{
 			ButtonIsEnabled = true;
 			SetButtonPlay();
 			UpdateProperties();
-			OnPropertyChanged("FolderPath");
+			OnPropertyChanged("DirectoryPath");
 		}
 
 		public void UpdateSlider()
@@ -205,6 +201,12 @@ namespace Shuffler
 		{
 			PlayerControls.Pause();
 			SetButtonPlay();
+		}
+
+		void OnPlay()
+		{
+			PlayBackSliderIsEnabled = true;
+			OnPropertyChanged("FileName");
 		}
 	}
 }

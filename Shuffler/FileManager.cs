@@ -23,13 +23,13 @@ namespace Shuffler
 		readonly string[] AllowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".mp4", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac" };
 		string[] FilePaths { get; set; } = { };
 
-		string _folderPath = "Double click to pick folder...";
-		public string FolderPath
+		string _directoryPath = "Double click to pick directory...";
+		public string DirectoryPath
 		{
-			get { return _folderPath; }
+			get { return _directoryPath; }
 			set
 			{
-				_folderPath = value;
+				_directoryPath = value;
 				GetFiles();
 			}
 		}
@@ -37,7 +37,7 @@ namespace Shuffler
 		void GetFiles()
 		{
 			FilePaths = Directory
-			.GetFiles(FolderPath)
+			.GetFiles(DirectoryPath)
 			.Where(file => AllowedExtensions.Any(file.ToLower().EndsWith))
 			.ToArray();
 

@@ -42,9 +42,9 @@ namespace Shuffler
 		}
 
 
-		void PickFolder_DoubleClick(object sender, RoutedEventArgs e)
+		void PickDirectory_DoubleClick(object sender, RoutedEventArgs e)
 		{
-			ShufflerUI.PickFolder();
+			ShufflerUI.PickDirectory();
 		}
 
 		void Play_Click(object sender, RoutedEventArgs e)
