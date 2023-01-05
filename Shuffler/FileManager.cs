@@ -17,6 +17,8 @@ namespace Shuffler
 		public event invalidPath InvalidPath;
 		public delegate void missingFile();
 		public event missingFile MissingFile;
+		public delegate void directorySelected();
+		public event directorySelected DirectorySelected;
 
 		Random Random { get; set; } = new();
 
@@ -46,8 +48,8 @@ namespace Shuffler
 				InvalidPath.Invoke();
 				return;
 			}
-			ShufflerUI.Player.controls.stop();
-			ShufflerUI.Player = new();
+
+			DirectorySelected.Invoke();
 		}
 
 		public string GetRandomFile()

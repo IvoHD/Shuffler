@@ -1,4 +1,5 @@
-﻿using WMPLib;
+﻿using System;
+using WMPLib;
 
 namespace Shuffler
 {
@@ -8,10 +9,13 @@ namespace Shuffler
 		public event startedPlaying StartedPlaying;
 
 		FileManager FileManager { get; set; }
+		public WindowsMediaPlayer Player { get; private set; }
 
 		public PlayerControls(FileManager fileManager)
 		{
 			FileManager = fileManager;
+			Player = new();
+			FileManager.DirectorySelected += OnNewDirectorySelected;
 		}
 
 		int _volume = 50;
@@ -21,40 +25,47 @@ namespace Shuffler
 			set
 			{
 				_volume = value;
-				ShufflerUI.Player.settings.volume = value;
+				Player.settings.volume = value;
 			}
+		}
+
+		void OnNewDirectorySelected()
+		{
+			Player.controls.stop();
+			Player = new();
 		}
 
 		void PlayRandomFile()
 		{
 			string Path = FileManager.GetRandomFile();
 
-			ShufflerUI.Player = new();
-			ShufflerUI.Player.PlayStateChange += PlayerOnPlayStateChangeAutoplay;
-			ShufflerUI.Player.URL = Path;
-			ShufflerUI.Player.settings.volume = Volume;
-			ShufflerUI.Player.controls.play();
+			Player.controls.stop();
+			Player = new();
+			Player.PlayStateChange += PlayerOnPlayStateChangeAutoplay;
+			Player.URL = Path;
+			Player.settings.volume = Volume;
+			Player.controls.play();
 
 			StartedPlaying.Invoke();
 		}
 
 		void PlayerOnPlayStateChangeAutoplay(int _)
 		{
-			if (ShufflerUI.Player.playState == WMPPlayState.wmppsMediaEnded)
+			if (Player.playState == WMPPlayState.wmppsMediaEnded)
 				PlayRandomFile();
 		}
 
 		public void Play()
 		{
-			if (ShufflerUI.Player.playState == WMPPlayState.wmppsPaused)
-				ShufflerUI.Player.controls.play();
+			if (Player.playState == WMPPlayState.wmppsPaused)
+				Player.controls.play();
 			else
 				PlayRandomFile();
 		}
 
 		public void Pause()
 		{
-			ShufflerUI.Player.controls.pause();
+			Player.controls.pause();
 		}
 	}
 }

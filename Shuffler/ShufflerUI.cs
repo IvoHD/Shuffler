@@ -4,20 +4,14 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System;
 using System.IO;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace Shuffler
 {
 	class ShufflerUI : INotifyPropertyChanged
 	{
-
 		public event PropertyChangedEventHandler? PropertyChanged;
-		protected void OnPropertyChanged(String info)
-		{
-			if (PropertyChanged is not null)
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
-		}
-
-		public static WindowsMediaPlayer Player = new();
+	
 
 		FileManager FileManager { get; set; }
 		PlayerControls PlayerControls { get; set; }
@@ -30,6 +24,7 @@ namespace Shuffler
 			FileManager = new();
 			PlayerControls = new(FileManager);
 
+			FileManager.DirectorySelected += () => OnPropertyChanged("FileName");
 			FileManager.InvalidPath += InvalidPath;
 			FileManager.MissingFile += MissingFile;
 			PlayerControls.StartedPlaying += OnPlay;
@@ -93,24 +88,24 @@ namespace Shuffler
 		{
 			get
 			{
-				if (Player?.controls?.currentPosition is null || Player?.currentMedia?.duration is null)
+				if (PlayerControls.Player?.controls?.currentPosition is null || PlayerControls.Player?.currentMedia?.duration is null)
 					return 0;
-				return Player.controls.currentPosition / Player.currentMedia.duration * 100;
+				return PlayerControls.Player.controls.currentPosition / PlayerControls.Player.currentMedia.duration * 100;
 			}
 			set
 			{
-				Player.controls.currentPosition = Player.currentMedia.duration * value / 100;
+				PlayerControls.Player.controls.currentPosition = PlayerControls.Player.currentMedia.duration * value / 100;
 			}
 		}
 
 		public string CurrPositionString
 		{
-			get { return Player?.controls?.currentPositionString is "" ? "00:00" : Player.controls.currentPositionString; }
+			get { return PlayerControls.Player?.controls?.currentPositionString is "" ? "00:00" : PlayerControls.Player.controls.currentPositionString; }
 		}
 
 		public string MaxPositionString
 		{
-			get { return Player?.currentMedia?.durationString ?? "00:00"; }
+			get { return PlayerControls.Player?.currentMedia?.durationString ?? "00:00"; }
 		}
 
 		public string DirectoryPath
@@ -124,7 +119,13 @@ namespace Shuffler
 
 		public string FileName
 		{
-			get { return Player is null ? "select directory" : Path.GetFileNameWithoutExtension(Player.URL); }
+			get { return Path.GetFileNameWithoutExtension(PlayerControls.Player.URL); }
+		}
+
+		protected void OnPropertyChanged(String info)
+		{
+			if (PropertyChanged is not null)
+				PropertyChanged(this, new PropertyChangedEventArgs(info));
 		}
 
 		public void PickDirectory()
@@ -133,9 +134,16 @@ namespace Shuffler
 			dlg.IsFolderPicker = true;
 
 			if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
+			{
 				if (dlg.FileName != string.Empty)
+				{
+					if (FileManager.DirectoryPath == dlg.FileName)
+						return;
 					DirectoryPath = dlg.FileName;
-
+				}
+			}
+			else
+				return;
 			DirectorySelected();
 		}
 
@@ -161,7 +169,7 @@ namespace Shuffler
 
 		public void UpdateSlider()
 		{
-			if (Player.playState == WMPPlayState.wmppsPlaying)
+			if (PlayerControls.Player.playState == WMPPlayState.wmppsPlaying)
 				UpdateProperties();
 		}
 

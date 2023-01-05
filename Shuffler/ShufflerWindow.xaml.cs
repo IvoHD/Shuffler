@@ -76,5 +76,10 @@ namespace Shuffler
 			Slider Slider = sender as Slider;
 			ShufflerUI.CurrPositionPercent = Slider.Value;
 		}
+
+		void Skip_Click(object sender, EventArgs e)
+		{
+			ShufflerUI.Play();
+		}
 	}
 }
