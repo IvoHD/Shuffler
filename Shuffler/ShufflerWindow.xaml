@@ -5,20 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Shuffler"
         mc:Ignorable="d"
-        Title="Shuffler" Height="450" Width="800"
+        Title="Shuffler" Height="400" Width="600"
         Icon="Images\Icon.ico">
-    <Grid>
-        <TextBox HorizontalAlignment="Center" Margin="0,70,0,0" MouseDoubleClick="PickDirectory_DoubleClick" Text="{Binding DirectoryPath}" VerticalAlignment="Top" Width="520"/>
-        <ToggleButton HorizontalAlignment="Center" IsEnabled="{Binding ButtonIsEnabled}" Margin="0,234,0,0" VerticalAlignment="Top" Height="100" Width="100" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
-            <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
-        </ToggleButton>
-        <Button HorizontalAlignment="Center" Margin="250,130,0,0" IsEnabled="{Binding ButtonIsEnabled}" Height="40" Width="40" Click="Skip_Click">
-            <TextBlock Text="⏭" FontSize="20"/>
-        </Button>
-        <Slider Margin="50,90,700,95" Orientation="Vertical" Value="{Binding Volume}" Maximum="100"/>
-        <Slider Margin="150,350,150,0" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
-        <TextBlock Margin="83,350,650,50" Text="{Binding CurrPositionString}"></TextBlock>
-        <TextBlock Margin="650,350,83,50" Text="{Binding MaxPositionString}"></TextBlock>
-        <TextBlock HorizontalAlignment="Center" Margin="0,114,0,0" TextWrapping="Wrap" Text="{Binding FileName}" FontSize="40" TextAlignment="Center" VerticalAlignment="Top" Height="101" Width="520"/>
-    </Grid>
+    <Viewbox StretchDirection="Both" Stretch="Uniform" Width="600">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Slider Grid.Column="0" Margin="50" Orientation="Vertical" Value="{Binding Volume}" Maximum="100" HorizontalAlignment="Center" Width="18"/>
+            <TextBox Grid.Column="1" Margin="20,10,20,0" MouseDoubleClick="PickDirectory_DoubleClick" Text="{Binding DirectoryPath}" VerticalAlignment="Top"/>
+            <ToggleButton Grid.Column="1" IsEnabled="{Binding ButtonIsEnabled}" Margin="130,200,130,65" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
+                <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
+            </ToggleButton>
+            <Button Grid.Column="1" Margin="260,230,50,90" IsEnabled="{Binding ButtonIsEnabled}" Click="Skip_Click">
+                <TextBlock Text="⏭" FontSize="30" Margin="0,0,0,3"/>
+            </Button>
+            <Slider Grid.Column="1" Margin="30,320,30,10" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
+            <TextBlock Grid.Column="1" Margin="0,320,330,0" Text="{Binding CurrPositionString}"/>
+            <TextBlock Grid.Column="1" Margin="330,320,0,0" Text="{Binding MaxPositionString}"/>
+
+            <Viewbox Grid.Column="1" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="140">
+                <TextBox VerticalAlignment="Top" MaxWidth="150" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding FileName, Mode=OneWay}" FontStretch="Normal" TextAlignment="Center"/>
+            </Viewbox>
+        </Grid>
+    </Viewbox>
 </Window>
