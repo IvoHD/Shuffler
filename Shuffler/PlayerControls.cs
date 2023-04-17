@@ -9,7 +9,7 @@ namespace Shuffler
 		public event startedPlaying StartedPlaying;
 
 		FileManager FileManager { get; set; }
-		public WindowsMediaPlayer Player { get; private set; }
+		public static WindowsMediaPlayer Player { get; private set; }
 
 		public PlayerControls(FileManager fileManager)
 		{
@@ -66,6 +66,11 @@ namespace Shuffler
 		public void Pause()
 		{
 			Player.controls.pause();
+		}
+
+		public void Stop()
+		{
+			Player.controls.stop();
 		}
 	}
 }

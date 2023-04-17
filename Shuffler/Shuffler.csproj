@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Images\Icon.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x86;x64;ARM64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Shuffler"
         mc:Ignorable="d"
         Title="Shuffler" Height="400" Width="600"
-        Icon="Images\Icon.ico">
+        Icon="Images\Icon.ico"
+        Closing="OnExit">
     <Viewbox StretchDirection="Both" Stretch="Uniform" Width="600">
         <Grid>
             <Grid.ColumnDefinitions>

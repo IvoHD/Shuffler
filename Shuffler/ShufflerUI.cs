@@ -4,31 +4,48 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System;
 using System.IO;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using System.Windows.Threading;
 
 namespace Shuffler
 {
 	class ShufflerUI : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler? PropertyChanged;
-	
 
 		FileManager FileManager { get; set; }
 		PlayerControls PlayerControls { get; set; }
-
+		DiscordManager DiscordManager { get; set; }
 		const string PlayIcon = "▶";
 		const string PauseIcon = "⏸";
 
+		DispatcherTimer UpdateTimer { get; set; } = new();
 		public ShufflerUI()
 		{
+			WindowsMediaPlayer Player = new();
 			FileManager = new();
 			PlayerControls = new(FileManager);
+			DiscordManager = new(this);
 
 			FileManager.DirectorySelected += () => OnPropertyChanged("FileName");
 			FileManager.InvalidPath += InvalidPath;
 			FileManager.MissingFile += MissingFile;
 			PlayerControls.StartedPlaying += OnPlay;
+
+			//UpdateCurrPositionTimer updates CurrPosition every 100 milliseconds
+			UpdateTimer.Interval = new(0, 0, 0, 0, 100);
+			UpdateTimer.Tick += UpdatePlayerPositions;
+			UpdateTimer.Start();
+
 		}
+
+		void UpdatePlayerPositions(object sender, EventArgs e)
+		{
+			if (!DragStarted)
+				UpdateSlider();
+			else
+				UpdateSliderExcludingCurrPositionPercent();
+		}
+
 
 		string _buttonSymbol = PlayIcon;
 		public string ButtonSymbol
@@ -97,6 +114,8 @@ namespace Shuffler
 				PlayerControls.Player.controls.currentPosition = PlayerControls.Player.currentMedia.duration * value / 100;
 			}
 		}
+
+		public bool DragStarted { get; set; }
 
 		public string CurrPositionString
 		{
@@ -167,13 +186,13 @@ namespace Shuffler
 			OnPropertyChanged("DirectoryPath");
 		}
 
-		public void UpdateSlider()
+		void UpdateSlider()
 		{
 			if (PlayerControls.Player.playState == WMPPlayState.wmppsPlaying)
 				UpdateProperties();
 		}
 
-		public void UpdateSliderExcludingCurrPositionPercent()
+		void UpdateSliderExcludingCurrPositionPercent()
 		{
 			OnPropertyChanged("CurrPositionString");
 			OnPropertyChanged("MaxPositionString");
@@ -186,17 +205,22 @@ namespace Shuffler
 			OnPropertyChanged("MaxPositionString");
 		}
 
-		public void SetButtonPlay()
+		void OnPlay()
+		{
+			PlayBackSliderIsEnabled = true;
+			OnPropertyChanged("FileName");
+		}
+
+		void SetButtonPlay()
 		{
 			ButtonSymbol = PlayIcon;
 			ButtonStateIsPlay = false;
 		}
 
-		public void SetButtonPause()
+		void SetButtonPause()
 		{
 			ButtonSymbol = PauseIcon;
 			ButtonStateIsPlay = true;
-
 		}
 
 		public void Play()
@@ -211,10 +235,10 @@ namespace Shuffler
 			SetButtonPlay();
 		}
 
-		void OnPlay()
+		public void Exit()
 		{
-			PlayBackSliderIsEnabled = true;
-			OnPropertyChanged("FileName");
+			PlayerControls.Stop();
+			DiscordManager.Dispose();
 		}
 	}
 }
