@@ -1829,22 +1829,28 @@ namespace Discord
             }
         }
 
-        [MonoPInvokeCallback]
-        private static void UpdateActivityCallbackImpl(IntPtr ptr, Result result)
-        {
-            GCHandle h = GCHandle.FromIntPtr(ptr);
-            UpdateActivityHandler callback = (UpdateActivityHandler)h.Target;
-            h.Free();
-            callback(result);
-        }
+		//https://github.com/discord/gamesdk-and-dispatch/issues/36#issuecomment-846799714
+		[MonoPInvokeCallback]
+		private static void UpdateActivityCallbackImpl(IntPtr ptr, Result result)
+		{
+			GCHandle h = GCHandle.FromIntPtr(ptr);
+			UpdateActivityHandler callback = (UpdateActivityHandler)h.Target;
+			h.Free();
+			callback(result);
+		}
 
-        public void UpdateActivity(Activity activity, UpdateActivityHandler callback)
-        {
-            GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), UpdateActivityCallbackImpl);
-        }
+		// This line ensures that UpdateActivityCallbackImpl is not collected by GC
+		static FFIMethods.UpdateActivityCallback staticCallback = UpdateActivityCallbackImpl;
 
-        [MonoPInvokeCallback]
+		public void UpdateActivity(Activity activity, UpdateActivityHandler callback)
+		{
+			GCHandle wrapped = GCHandle.Alloc(callback);
+
+			// This line now uses staticCallback instead of UpdateActivityCallbackImpl 
+			Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), staticCallback);
+		}
+
+		[MonoPInvokeCallback]
         private static void ClearActivityCallbackImpl(IntPtr ptr, Result result)
         {
             GCHandle h = GCHandle.FromIntPtr(ptr);
