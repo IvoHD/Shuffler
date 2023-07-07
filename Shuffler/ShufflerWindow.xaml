@@ -17,19 +17,34 @@
             </Grid.ColumnDefinitions>
             <Slider Grid.Column="0" Margin="50" Orientation="Vertical" Value="{Binding Volume}" Maximum="100" HorizontalAlignment="Center" Width="18"/>
             <TextBox Grid.Column="1" Margin="20,10,20,0" MouseDoubleClick="PickDirectory_DoubleClick" Text="{Binding DirectoryPath}" VerticalAlignment="Top"/>
-            <ToggleButton Grid.Column="1" IsEnabled="{Binding ButtonIsEnabled}" Margin="130,200,130,65" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
+            <ToggleButton Grid.Column="1" IsEnabled="{Binding ButtonIsEnabled}" Margin="130,190,130,75" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
                 <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
             </ToggleButton>
-            <Button Grid.Column="1" Margin="260,230,50,90" IsEnabled="{Binding ButtonIsEnabled}" Click="Skip_Click">
-                <TextBlock Text="⏭" FontSize="30" Margin="0,0,0,3"/>
+            <Button Grid.Column="1" Margin="260,220,50,100" IsEnabled="{Binding ButtonIsEnabled}" Click="Skip_Click">
+                <TextBlock Text="⏭" FontSize="30"/>
             </Button>
-            <Slider Grid.Column="1" Margin="30,320,30,10" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
-            <TextBlock Grid.Column="1" Margin="0,320,330,0" Text="{Binding CurrPositionString}"/>
-            <TextBlock Grid.Column="1" Margin="330,320,0,0" Text="{Binding MaxPositionString}"/>
+            <Slider Grid.Column="1" Margin="30,301,30,29" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
+            <TextBlock Margin="0,300,330,20" Text="{Binding CurrPositionString}" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Margin="330,300,0,20" Text="{Binding MaxPositionString}"/>
 
             <Viewbox Grid.Column="1" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="140">
                 <TextBox VerticalAlignment="Top" MaxWidth="150" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding FileName, Mode=OneWay}" FontStretch="Normal" TextAlignment="Center"/>
             </Viewbox>
+            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,0,10" Height="30" HorizontalAlignment="Center" Background="Transparent"  FontStretch="Normal" TextAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FilesCount}" Value="0">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+                <Run Text="{Binding CurrFilePos, Mode=OneWay}"/>
+                <Run Text="of"/>
+                <Run Text="{Binding FilesCount, Mode=OneWay}"/>
+            </TextBlock>
         </Grid>
     </Viewbox>
 </Window>

@@ -35,6 +35,24 @@ namespace Shuffler
 				GetFiles();
 			}
 		}
+		
+		public int FilesCount
+		{
+			get { return (int?)FilePaths.Length ?? 0; }
+		}
+
+		private int? _currFileIndex;
+		public int? CurrFileIndex
+		{
+			get
+			{
+				return _currFileIndex;
+			}
+			set
+			{
+				_currFileIndex = value;
+			}
+		}
 
 		void GetFiles()
 		{
@@ -54,14 +72,14 @@ namespace Shuffler
 
 		public string GetRandomFile()
 		{
-			string Path = FilePaths[Random.Next(FilePaths.Length)];
-			if (!File.Exists(FilePaths[Random.Next(FilePaths.Length)]))
+			CurrFileIndex = Random.Next(FilePaths.Length);
+			if (!File.Exists(FilePaths[CurrFileIndex.Value]))
 			{
 				MissingFile.Invoke();
 				return "";
 			}
 
-			return Path;
+			return FilePaths[CurrFileIndex.Value];
 		}
 	}
 }

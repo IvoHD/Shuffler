@@ -21,21 +21,27 @@ namespace Shuffler
 		DispatcherTimer UpdateTimer { get; set; } = new();
 		public ShufflerUI()
 		{
-			WindowsMediaPlayer Player = new();
 			FileManager = new();
 			PlayerControls = new(FileManager);
 			DiscordManager = new(this);
 
-			FileManager.DirectorySelected += () => OnPropertyChanged("FileName");
+			FileManager.DirectorySelected += () =>
+			{
+				OnPropertyChanged("FileName");
+				OnPropertyChanged("FilesCount");
+			};
 			FileManager.InvalidPath += InvalidPath;
 			FileManager.MissingFile += MissingFile;
-			PlayerControls.StartedPlaying += OnPlay;
+			PlayerControls.StartedPlaying += () =>
+			{
+				OnPlay();
+				OnPropertyChanged("CurrFilePos");
+			};
 
 			//UpdateCurrPositionTimer updates CurrPosition every 100 milliseconds
 			UpdateTimer.Interval = new(0, 0, 0, 0, 100);
 			UpdateTimer.Tick += UpdatePlayerPositions;
 			UpdateTimer.Start();
-
 		}
 
 		void UpdatePlayerPositions(object sender, EventArgs e)
@@ -139,6 +145,15 @@ namespace Shuffler
 		public string FileName
 		{
 			get { return Path.GetFileNameWithoutExtension(PlayerControls.Player.URL); }
+		}
+
+		public string CurrFilePos
+		{
+			get { return (int?)FileManager.CurrFileIndex is null ? "0" : (FileManager.CurrFileIndex + 1).ToString(); }
+		}
+		public string FilesCount
+		{
+			get { return FileManager.FilesCount.ToString(); }
 		}
 
 		protected void OnPropertyChanged(String info)
