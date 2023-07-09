@@ -1,10 +1,7 @@
 ﻿using Discord;
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 using WMPLib;
 using Activity = Discord.Activity;
 
@@ -16,11 +13,12 @@ namespace Shuffler
 		ActivityManager ActivityManager { get; set; }
 		Activity Activity { get; set; }
 		ShufflerUI ShufflerUI { get; set; }
+		PlayerControls PlayerControls { get; set; }
 
 		Thread DiscordUpdateThread { get; set; }
 		bool Disposed { get; set; } 
 
-		public DiscordManager(ShufflerUI shufflerUI)
+		public DiscordManager(ShufflerUI shufflerUI, PlayerControls playerControls)
 		{
 			try
 			{
@@ -31,13 +29,15 @@ namespace Shuffler
 				RPC = null;
 			}
 
-			if(RPC is not null)
+			if (RPC is not null)
 			{
 				ShufflerUI = shufflerUI;
 				ActivityManager = RPC.GetActivityManager();
 				DiscordUpdateThread = new(Update);
 				DiscordUpdateThread.Start();
 			}
+
+			PlayerControls = playerControls;
 		}
 
 		public void UpdateActivity()

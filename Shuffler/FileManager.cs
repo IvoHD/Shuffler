@@ -1,13 +1,6 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Shuffler
 {
@@ -23,7 +16,16 @@ namespace Shuffler
 		Random Random { get; set; } = new();
 
 		readonly string[] AllowedExtensions = new[] { ".asf", ".wma", ".wmv", ".wm", ".asx", ".wax", ".wvx", ".wmx", ".wpl", ".dvr-ms", ".wmd", ".avi", ".mpg", ".mpeg", ".m1v", ".mp2", ".mp3", ".mpa", ".mpe", ".m3u", ".mid", ".midi", ".rmi", ".aif", ".aifc", ".aiff", ".au", ".snd", ".wav", ".cda", ".ivf", ".wmz", ".wms", ".mov", ".m4a", ".mp4", ".m4v", ".mp4v", ".3g2", ".3gp2", ".3gp", ".3gpp", ".aac", ".adt", ".adts", ".m2ts", ".flac" };
-		string[] FilePaths { get; set; } = { };
+
+		public string[] _filePaths = {};
+		public string[] FilePaths 
+		{ 
+			get { return (string[])_filePaths.Clone(); } 
+			private set
+			{
+				_filePaths = value;
+			}
+		}
 
 		string _directoryPath = "Double click to pick directory...";
 		public string DirectoryPath
@@ -80,6 +82,11 @@ namespace Shuffler
 			}
 
 			return FilePaths[CurrFileIndex.Value];
+		}
+
+		public string GetFileByIndex(int index)
+		{
+			return FilePaths[index];
 		}
 	}
 }

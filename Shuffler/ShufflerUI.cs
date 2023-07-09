@@ -3,7 +3,9 @@ using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Threading;
 
 namespace Shuffler
@@ -23,35 +25,23 @@ namespace Shuffler
 		{
 			FileManager = new();
 			PlayerControls = new(FileManager);
-			DiscordManager = new(this);
+			DiscordManager = new(this, PlayerControls);
 
 			FileManager.DirectorySelected += () =>
 			{
 				OnPropertyChanged("FileName");
 				OnPropertyChanged("FilesCount");
+				OnPropertyChanged("FilesList");
 			};
 			FileManager.InvalidPath += InvalidPath;
 			FileManager.MissingFile += MissingFile;
-			PlayerControls.StartedPlaying += () =>
-			{
-				OnPlay();
-				OnPropertyChanged("CurrFilePos");
-			};
+			PlayerControls.StartedPlaying += OnPlay;
 
 			//UpdateCurrPositionTimer updates CurrPosition every 100 milliseconds
 			UpdateTimer.Interval = new(0, 0, 0, 0, 100);
 			UpdateTimer.Tick += UpdatePlayerPositions;
 			UpdateTimer.Start();
 		}
-
-		void UpdatePlayerPositions(object sender, EventArgs e)
-		{
-			if (!DragStarted)
-				UpdateSlider();
-			else
-				UpdateSliderExcludingCurrPositionPercent();
-		}
-
 
 		string _buttonSymbol = PlayIcon;
 		public string ButtonSymbol
@@ -156,6 +146,11 @@ namespace Shuffler
 			get { return FileManager.FilesCount.ToString(); }
 		}
 
+		public List<string> FilesList
+		{
+			get { return FileManager.FilePaths.Select(filePath => Path.GetFileNameWithoutExtension(filePath)).ToList(); }
+		}
+		
 		protected void OnPropertyChanged(String info)
 		{
 			if (PropertyChanged is not null)
@@ -201,6 +196,14 @@ namespace Shuffler
 			OnPropertyChanged("DirectoryPath");
 		}
 
+		void UpdatePlayerPositions(object sender, EventArgs e)
+		{
+			if (!DragStarted)
+				UpdateSlider();
+			else
+				UpdateSliderExcludingCurrPositionPercent();
+		}
+
 		void UpdateSlider()
 		{
 			if (PlayerControls.Player.playState == WMPPlayState.wmppsPlaying)
@@ -224,6 +227,7 @@ namespace Shuffler
 		{
 			PlayBackSliderIsEnabled = true;
 			OnPropertyChanged("FileName");
+			OnPropertyChanged("CurrFilePos");
 		}
 
 		void SetButtonPlay()
@@ -242,6 +246,12 @@ namespace Shuffler
 		{
 			PlayerControls.Play();
 			SetButtonPause();
+		}
+
+
+		public void PlayFile(int index)
+		{
+			PlayerControls.PlayFileByIndex(index);
 		}
 
 		public void Pause()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using WMPLib;
 
 namespace Shuffler
@@ -9,12 +10,23 @@ namespace Shuffler
 		public event startedPlaying StartedPlaying;
 
 		FileManager FileManager { get; set; }
-		public static WindowsMediaPlayer Player { get; private set; }
+
+		WindowsMediaPlayer _player = new();
+		public WindowsMediaPlayer Player 
+		{
+			get { return _player; }
+			private set 
+			{
+				_player.controls.stop();
+				_player = value;
+				_player.settings.volume = Volume;
+				_player.PlayStateChange += PlayerOnPlayStateChangeAutoplay;
+			}
+		}
 
 		public PlayerControls(FileManager fileManager)
 		{
 			FileManager = fileManager;
-			Player = new();
 			FileManager.DirectorySelected += OnNewDirectorySelected;
 		}
 
@@ -32,20 +44,23 @@ namespace Shuffler
 		void OnNewDirectorySelected()
 		{
 			Player.controls.stop();
-			Player = new();
 		}
 
 		void PlayRandomFile()
 		{
-			string Path = FileManager.GetRandomFile();
+			PlayFile(FileManager.GetRandomFile());
+		}
 
-			Player.controls.stop();
+		public void PlayFileByIndex(int index)
+		{
+			PlayFile(FileManager.GetFileByIndex(index));
+		}
+
+		void PlayFile(string path)
+		{
 			Player = new();
-			Player.PlayStateChange += PlayerOnPlayStateChangeAutoplay;
-			Player.URL = Path;
-			Player.settings.volume = Volume;
+			Player.URL = path;
 			Player.controls.play();
-
 			StartedPlaying.Invoke();
 		}
 

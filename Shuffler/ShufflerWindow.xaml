@@ -9,7 +9,7 @@
         Icon="Images\Icon.ico"
         Closing="OnExit">
     <Viewbox StretchDirection="Both" Stretch="Uniform" Width="600">
-        <Grid>
+        <Grid Height="385">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="360"/>
@@ -17,15 +17,15 @@
             </Grid.ColumnDefinitions>
             <Slider Grid.Column="0" Margin="50" Orientation="Vertical" Value="{Binding Volume}" Maximum="100" HorizontalAlignment="Center" Width="18"/>
             <TextBox Grid.Column="1" Margin="20,10,20,0" MouseDoubleClick="PickDirectory_DoubleClick" Text="{Binding DirectoryPath}" VerticalAlignment="Top"/>
-            <ToggleButton Grid.Column="1" IsEnabled="{Binding ButtonIsEnabled}" Margin="130,190,130,75" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
+            <ToggleButton Grid.Column="1" IsEnabled="{Binding ButtonIsEnabled}" Margin="130,190,130,100" IsChecked="{Binding ButtonStateIsPlay}" Checked="Play_Click" Unchecked="Pause_Click">
                 <TextBlock Text="{Binding ButtonSymbol}" FontSize="75" Margin="-3,-54"/>
             </ToggleButton>
-            <Button Grid.Column="1" Margin="260,220,50,100" IsEnabled="{Binding ButtonIsEnabled}" Click="Skip_Click">
+            <Button Grid.Column="1" Margin="260,220,50,113" IsEnabled="{Binding ButtonIsEnabled}" Click="Skip_Click">
                 <TextBlock Text="⏭" FontSize="30"/>
             </Button>
             <Slider Grid.Column="1" Margin="30,301,30,29" Maximum="100" Value="{Binding CurrPositionPercent, Mode=OneWay}" Thumb.DragStarted="PlaybackSlider_DragStarted" Thumb.DragCompleted="PlaybackSlider_DragComplete" IsEnabled="{Binding PlayBackSliderIsEnabled}"/>
-            <TextBlock Margin="0,300,330,20" Text="{Binding CurrPositionString}" Grid.Column="1"/>
-            <TextBlock Grid.Column="1" Margin="330,300,0,20" Text="{Binding MaxPositionString}"/>
+            <TextBlock Margin="0,300,330,53" Text="{Binding CurrPositionString}" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Margin="330,300,0,56" Text="{Binding MaxPositionString}"/>
 
             <Viewbox Grid.Column="1" Margin="0,50,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="140">
                 <TextBox VerticalAlignment="Top" MaxWidth="150" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding FileName, Mode=OneWay}" FontStretch="Normal" TextAlignment="Center"/>
@@ -45,6 +45,23 @@
                 <Run Text="of"/>
                 <Run Text="{Binding FilesCount, Mode=OneWay}"/>
             </TextBlock>
+            
+            <StackPanel x:Name="HamburgerMenu" Grid.Column="2" Width="0" HorizontalAlignment="Right">
+                <Rectangle Fill="LightGray" Height="35"></Rectangle>
+                <ListView ItemsSource="{Binding FilesList}" MaxHeight="385" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="ListView_Click"/>
+            </StackPanel>
+            <Button Grid.Column="2" Width="35" Height="35" Background="LightGray" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Click="HamburgerButton_Click">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.Column="0" Fill="Black" Height="20" Width="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Rectangle Grid.Column="1" Fill="Black" Height="20" Width="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Rectangle Grid.Column="2" Fill="Black" Height="20" Width="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+            </Button>
         </Grid>
     </Viewbox>
 </Window>
